@@ -1,0 +1,6 @@
+services:
+  app:
+    environment:
+      DJANGO_DEBUG: 1
+    ports:
+      - 8888:8888

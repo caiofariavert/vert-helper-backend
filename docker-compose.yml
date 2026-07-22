@@ -1,0 +1,10 @@
+volumes:
+  data:
+
+services:
+  app:
+    build:
+      context: ./src
+    env_file: ./src/.env
+    environment:
+      - PYTHONUNBUFFERED=1

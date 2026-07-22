@@ -1,0 +1,52 @@
+{
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    }
+  },
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/src"
+  ],
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportOptionalMemberAccess": "none",
+    "reportGeneralTypeIssues": "none"
+  },
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "files.autoSave": "onFocusChange",
+  "python.formatting.provider": "black",
+  "editor.formatOnSave": true,
+  "beautify.language": {
+    "html": [
+      "django-html"
+    ]
+  },
+  "[django-html]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "HookyQR.beautify"
+  },
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}/src",
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/src",
+  },
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}/src",
+  },
+  "python.analysis.inlayHints.variableTypes": true,
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "editor.experimental.useCustomCodeActionMenu": true,
+  "editor.stickyScroll.enabled": true,
+  "python.testing.pytestArgs": [
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}/src",
+}
