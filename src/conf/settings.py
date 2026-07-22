@@ -70,8 +70,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "django_cas_ng.middleware.CASMiddleware",
 ]
+
+if not LOCAL_ENV:
+    MIDDLEWARE.append("django_cas_ng.middleware.CASMiddleware")
 
 ROOT_URLCONF = "conf.urls"
 
