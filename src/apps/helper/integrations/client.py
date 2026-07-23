@@ -117,7 +117,6 @@ class ExternalApiClient:
         if self._needs_auth:
             self._ensure_auth_header()
         response = getattr(self._session, method)(url, timeout=self.timeout, **kwargs)
-
         if response.status_code == 401 and self._needs_auth:
             logger.warning("401 recebido para %s — reautenticando.", url)
             self._invalidate_token_cache()

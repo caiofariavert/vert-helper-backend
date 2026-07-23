@@ -38,6 +38,8 @@ def validate_questions(schema: list, answers: dict) -> dict:
         kwarg = question["action_kwarg"]
         is_required = question.get("is_required", False)
         options = question.get("options")
+        if options == []:
+            options = None
 
         if not _is_active(question, answers):
             continue

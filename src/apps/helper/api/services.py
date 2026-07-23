@@ -18,6 +18,7 @@ from datetime import datetime
 import requests
 from django.utils import timezone
 
+from apps.helper.integrations.client import ExternalApiClient
 from apps.helper.models import Action, ActionExecutionLog
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ def execute_action(
     :returns: dict de resposta para o frontend (sem details em caso de erro).
     """
     application = action.application
+    client = ExternalApiClient(application)
     url = _build_execution_url(application.base_url, action.slug)
 
     started_at: datetime = timezone.now()
@@ -46,9 +48,15 @@ def execute_action(
     result_status = ActionExecutionLog.RESULT_ERROR
     result_message = ""
     result_details = ""
-
+    data = {
+        "questions": mapped_kwargs
+    }
     try:
-        response = requests.post(url, json=mapped_kwargs, timeout=EXECUTION_TIMEOUT)
+        response = client._request(
+            method="post",
+            url=url,
+            json=data,
+        )
         raw_response = _safe_json(response)
         result_status, result_message, result_details = _parse_response(
             response, raw_response
