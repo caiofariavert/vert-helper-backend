@@ -110,7 +110,7 @@ class SystemAdmin(SoftDeleteAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(SoftDeleteAdmin):
-    list_display = ["name", "slug", "environment", "system", "base_url", "status_badge", "created_at"]
+    list_display = ["name", "slug", "environment", "auth_type", "system", "base_url", "status_badge", "created_at"]
     list_filter = ["is_active", "environment", "system"]
     search_fields = ["name", "slug", "base_url"]
     prepopulated_fields = {"slug": ("name",)}
@@ -118,6 +118,7 @@ class ApplicationAdmin(SoftDeleteAdmin):
     actions = SoftDeleteAdmin.actions + [
         "create_schedules_action",
         "deactivate_schedules_action",
+        "force_sync_health_action",
     ]
 
     @admin.action(description="Criar/reativar agendamentos de sync (Django-Q)")
@@ -139,6 +140,24 @@ class ApplicationAdmin(SoftDeleteAdmin):
             deactivate_application_schedules(application)
             count += 1
         self.message_user(request, f"Agendamentos desativados para {count} aplicação(ões).")
+
+    @admin.action(description="⚡ Forçar sync de saúde imediato (Django-Q)")
+    def force_sync_health_action(self, request, queryset):
+        from django_q.tasks import async_task
+
+        count = 0
+        for application in queryset:
+            async_task(
+                "apps.helper.tasks.sync_application_health",
+                application_id=str(application.id),
+                force_refresh=True,
+            )
+            count += 1
+        self.message_user(
+            request,
+            f"Sync imediato disparado para {count} aplicação(ões). "
+            "Acompanhe em Django-Q → Successful/Failed Tasks.",
+        )
 
 
 @admin.register(Service)

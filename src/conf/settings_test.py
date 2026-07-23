@@ -17,3 +17,12 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
+
+# Django-Q2: modo síncrono em testes (sem Redis)
+Q_CLUSTER = {
+    "name": "helper-test",
+    "workers": 1,
+    "timeout": 60,
+    "orm": "default",
+    "sync": True,
+}

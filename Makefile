@@ -3,7 +3,7 @@ ARGS = $(filter-out $@,$(MAKECMDGOALS))
 MAKEFLAGS += --silent
 BASE_PATH=${PWD}
 PYTHON_EXEC=python
-DOCKER_COMPOSE_FILE=$(shell echo -f docker-compose.yml -f docker-compose.override.yml)
+DOCKER_COMPOSE_FILE=$(shell echo -f docker-compose.override.gerador.yml)
 VENV_PATH=~/venv/django_template
 
 include src/.env
@@ -39,30 +39,30 @@ up: show_env _ensure_env
 	docker compose ${DOCKER_COMPOSE_FILE} up -d --remove-orphans
 
 up_debug: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} stop app
+	docker compose ${DOCKER_COMPOSE_FILE} stop helper-backend
 	docker compose ${DOCKER_COMPOSE_FILE} -f docker-compose.override.debug.yml up -d --remove-orphans
 
 up_normal: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} stop app
+	docker compose ${DOCKER_COMPOSE_FILE} stop helper-backend
 	docker compose ${DOCKER_COMPOSE_FILE} up -d --remove-orphans
 
 checkcode: show_env
 	echo "verify pep8 ..."
-	docker compose ${DOCKER_COMPOSE_FILE} exec app flake8 .
-	docker compose ${DOCKER_COMPOSE_FILE} exec app isort . --check-only
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend flake8 .
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend isort . --check-only
 
 flake8: show_env
 	echo "verify pep8 ..."
-	docker compose ${DOCKER_COMPOSE_FILE} exec app black .
-	docker compose ${DOCKER_COMPOSE_FILE} exec app isort .
-	docker compose ${DOCKER_COMPOSE_FILE} exec app flake8 .
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend black .
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend isort .
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend flake8 .
 
 localflake8: show_env
 	echo "verify pep8 ..."
 	black . && isort . && flake8 .
 
 log: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} logs -f --tail 200 app
+	docker compose ${DOCKER_COMPOSE_FILE} logs -f --tail 200 helper-backend
 
 logs: show_env
 	docker compose ${DOCKER_COMPOSE_FILE} logs -f --tail 200
@@ -80,65 +80,65 @@ sh: show_env
 	docker compose ${DOCKER_COMPOSE_FILE} exec ${ARGS} bash
 
 test: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app pytest
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend pytest
 	sudo chown -R "${USER}:${USER}" ./
 
 psql: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec db psql -d database
+	docker compose ${DOCKER_COMPOSE_FILE} exec db-helper-backend psql -d database
 
 pgcli: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app pgcli postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend pgcli postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
 _drop_db:
-	docker compose ${DOCKER_COMPOSE_FILE} stop db
-	docker compose ${DOCKER_COMPOSE_FILE} rm db
+	docker compose ${DOCKER_COMPOSE_FILE} stop db-helper-backend
+	docker compose ${DOCKER_COMPOSE_FILE} rm db-helper-backend
 
 _create_db:
-	docker compose ${DOCKER_COMPOSE_FILE} up -d db
+	docker compose ${DOCKER_COMPOSE_FILE} up -d db-helper-backend
 
 recreate_db: show_env _drop_db _create_db
 
 createsuperuser: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} ./manage.py shell -c "from apps.user.models import User; User.objects.create_superuser('root@root.com.br', 'root', name='root'); print('Superuser created: root@root.com.br:root')"
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} ./manage.py shell -c "from helper-backends.user.models import User; User.objects.create_superuser('root@root.com.br', 'root', name='root'); print('Superuser created: root@root.com.br:root')"
 
 everyone_superuser: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.all().update(is_staff=True, is_superuser=True); print('All users are superusers')"
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.all().update(is_staff=True, is_superuser=True); print('All users are superusers')"
 
 fixtures: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app pytest --fixtures
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend pytest --fixtures
 
 migrate: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py migrate ${ARGS}
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py migrate ${ARGS}
 
 collectstatic: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py collectstatic --no-input
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py collectstatic --no-input
 
 makemigrations: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py makemigrations ${ARGS}
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py migrate
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py makemigrations ${ARGS}
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py migrate
 
 migrate: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py migrate
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py migrate
 
 pip_install: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} -m pip install -r requirements.txt
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} -m pip install -r requirements.txt
 
 manage: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py ${ARGS}
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py ${ARGS}
 
 test-watch: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ptw --clear --
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ptw --clear --
 
 coverage: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app pytest --cov --cov-report xml:coverage.xml
-	docker compose ${DOCKER_COMPOSE_FILE} exec app coverage html
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend pytest --cov --cov-report xml:coverage.xml
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend coverage html
 	sudo chown -R "${USER}:${USER}" ./src/htmlcov
 
 clean_db: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec db psql -d ${POSTGRES_DB} -c 'drop schema public cascade; create schema public;'
+	docker compose ${DOCKER_COMPOSE_FILE} exec db-helper-backend psql -d ${POSTGRES_DB} -c 'drop schema public cascade; create schema public;'
 
 showmigrations: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py showmigrations ${ARGS}
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py showmigrations ${ARGS}
 
 restartq: show_env
 	docker compose ${DOCKER_COMPOSE_FILE} stop djangoq
@@ -148,7 +148,7 @@ chown_project:
 	sudo chown -R "${USER}:${USER}" ./
 
 generate_factories_bot: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} manage.py generate_factories
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py generate_factories
 
 generate_factories: show_env generate_factories_bot chown_project flake8
 
@@ -158,10 +158,10 @@ create_venv: show_env
 	${VENV_PATH}/bin/pip install -r ./src/requirements.txt
 
 upgrade_packages: show_env pip_install
-	docker compose ${DOCKER_COMPOSE_FILE} exec app pip-upgrade --skip-virtualenv-check
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend pip-upgrade --skip-virtualenv-check
 
 kafka_consumer: show_env
-	docker compose ${DOCKER_COMPOSE_FILE} exec app ${PYTHON_EXEC} ./manage.py kafka_consumer
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} ./manage.py kafka_consumer
 
 show_coverage: show_env coverage
 	cd src/htmlcov && python3 -m http.server --bind 0.0.0.0 9100
@@ -198,3 +198,12 @@ security-scan-table:
 clean-trivy-cache:
 	@echo "Limpando cache do Trivy..."
 	docker volume rm -f trivy-cache
+
+shell: show_env
+	docker compose ${DOCKER_COMPOSE_FILE} exec helper-backend ${PYTHON_EXEC} manage.py shell
+
+build: show_env stop
+	docker compose ${DOCKER_COMPOSE_FILE} build --no-cache --force-rm
+
+logq: show_env
+	docker compose ${DOCKER_COMPOSE_FILE} logs -f --tail 200 djangoq-helper-backend

@@ -1,10 +1,13 @@
 #!/bin/sh
 
 echo "Runnning Requirements.txt"
-yes | pip install -r requirements.txt
+# yes | pip install -r requirements.txt
 
 echo "Runnning Database Migrations..."
 yes | python manage.py migrate
+
+echo "Setting up Helper schedules..."
+yes | python manage.py setup_helper_schedules
 
 echo "Runnning Create Cache Table..."
 yes | python manage.py createcachetable

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; color: #333; background: #f5f5f5; }
+    .container { max-width: 600px; margin: 32px auto; background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .header { background: #c0392b; color: #fff; padding: 24px 32px; }
+    .header h1 { margin: 0; font-size: 20px; }
+    .body { padding: 24px 32px; }
+    .field { margin-bottom: 12px; }
+    .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: .05em; }
+    .value { font-size: 15px; font-weight: bold; }
+    .status-failed { color: #c0392b; }
+    .footer { padding: 16px 32px; background: #f5f5f5; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚠️ Falha detectada — {{ system.name }}</h1>
+    </div>
+    <div class="body">
+      <div class="field">
+        <div class="label">Sistema</div>
+        <div class="value">{{ system.name }}</div>
+      </div>
+      <div class="field">
+        <div class="label">Aplicação</div>
+        <div class="value">{{ application.name }} ({{ application.get_environment_display }})</div>
+      </div>
+      <div class="field">
+        <div class="label">Serviço</div>
+        <div class="value">{{ service.name }}</div>
+      </div>
+      <div class="field">
+        <div class="label">Status</div>
+        <div class="value status-failed">{{ incident.current_status }}</div>
+      </div>
+      <div class="field">
+        <div class="label">Status anterior</div>
+        <div class="value">{{ incident.previous_status }}</div>
+      </div>
+      <div class="field">
+        <div class="label">Detectado em</div>
+        <div class="value">{{ incident.opened_at|date:"d/m/Y H:i:s" }}</div>
+      </div>
+    </div>
+    <div class="footer">Helper — notificação automática. Não responda este email.</div>
+  </div>
+</body>
+</html>

@@ -3,7 +3,8 @@ from django.db.utils import OperationalError
 from django.db.models import Exists, OuterRef
 from rest_framework import mixins, status, viewsets
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import AllowAny
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import action
@@ -15,6 +16,7 @@ from .filters import (
     ActionFilter,
     ApplicationFilter,
     EcosystemFilter,
+    ServiceFilter,
     SystemFilter,
 )
 from .permissions import IsSuperUser
@@ -24,9 +26,16 @@ from .serializers import (
     ActionListSerializer,
     ApplicationSerializer,
     EcosystemSerializer,
+    ServiceSerializer,
     SystemSerializer,
 )
 from .services import execute_action
+
+
+class HelperPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 # ---------------------------------------------------------------------------
@@ -47,6 +56,26 @@ class HelperHealthView(APIView):
         return Response({"status": "ok"})
 
 
+class WhoAmIView(APIView):
+    """
+    Retorna informações do usuário autenticado via JWT.
+
+    Útil para o frontend verificar se o token é válido
+    e se o usuário tem acesso às rotas funcionais (is_superuser).
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "email": user.email,
+            "name": getattr(user, "name", ""),
+            "is_superuser": user.is_superuser,
+            "is_active": user.is_active,
+        })
+
+
 # ---------------------------------------------------------------------------
 # Base ViewSet
 # ---------------------------------------------------------------------------
@@ -61,6 +90,7 @@ class SuperUserReadOnlyViewSet(
 
     permission_classes = [IsSuperUser]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
+    pagination_class = HelperPagination
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +138,31 @@ class ApplicationViewSet(SuperUserReadOnlyViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Application.objects.select_related("system").all()
+        failed_service = Service.objects.filter(
+            application=OuterRef("pk"),
+            status=Service.STATUS_FAILED,
+            deleted_at__isnull=True,
+        )
+        return (
+            Application.objects.select_related("system")
+            .annotate(has_failed_service=Exists(failed_service))
+            .all()
+        )
+
+
+# ---------------------------------------------------------------------------
+# Serviços
+# ---------------------------------------------------------------------------
+
+
+class ServiceViewSet(SuperUserReadOnlyViewSet):
+    serializer_class = ServiceSerializer
+    filterset_class = ServiceFilter
+    ordering_fields = ["name", "status", "last_checked_at", "created_at"]
+    ordering = ["name"]
+
+    def get_queryset(self):
+        return Service.objects.select_related("application", "application__system").all()
 
 
 # ---------------------------------------------------------------------------

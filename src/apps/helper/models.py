@@ -103,6 +103,15 @@ class Application(BaseModel):
         (ENVIRONMENT_PRD, "Produção"),
     ]
 
+    AUTH_NONE = "NONE"
+    AUTH_BEARER = "BEARER"
+    AUTH_JWT = "JWT"
+    AUTH_TYPE_CHOICES = [
+        (AUTH_NONE, "Sem autenticação"),
+        (AUTH_BEARER, "Bearer"),
+        (AUTH_JWT, "JWT"),
+    ]
+
     name = models.CharField(max_length=255, verbose_name="Nome")
     slug = models.SlugField(max_length=255, unique=True, verbose_name="Slug")
     base_url = models.URLField(max_length=500, verbose_name="URL Base")
@@ -110,6 +119,13 @@ class Application(BaseModel):
         max_length=3,
         choices=ENVIRONMENT_CHOICES,
         verbose_name="Ambiente",
+    )
+    auth_type = models.CharField(
+        max_length=10,
+        choices=AUTH_TYPE_CHOICES,
+        default=AUTH_NONE,
+        verbose_name="Tipo de autenticação",
+        help_text="Prefixo usado no header Authorization ao chamar as APIs externas.",
     )
     system = models.ForeignKey(
         System,

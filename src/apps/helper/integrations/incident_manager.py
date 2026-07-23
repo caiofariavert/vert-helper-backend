@@ -6,8 +6,6 @@ Regras de deduplicação:
 - Não reabre nem renotifica enquanto o serviço permanecer FAILED.
 - Fecha Incident e notifica recuperação quando voltar para OK.
 - Status UNKNOWN não abre nem fecha Incident.
-
-Notificação: stub para Fase 6 (implementação real de email).
 """
 
 import logging
@@ -78,34 +76,29 @@ def _close_incident(service: Service):
 
 
 # ---------------------------------------------------------------------------
-# Notificações (stubs — implementação completa na Fase 6)
+# Notificações
 # ---------------------------------------------------------------------------
 
 
 def _notify_failure(incident: Incident):
-    """
-    TODO Fase 6: enviar e-mail de falha para administradores do System
-    e EscalationTargets se configurados.
+    from apps.helper.notifications import notify_incident_opened
 
-    Regras:
-    - Verificar MaintenanceWindow ativa antes de enviar.
-    - Registrar notification_sent_at após envio.
-    """
-    logger.info(
-        "[STUB] Notificação de falha pendente: service=%s incident=%s",
-        incident.service.name, incident.pk,
-    )
+    try:
+        notify_incident_opened(incident)
+    except Exception as exc:
+        logger.error(
+            "Falha ao enviar notificação de incidente: service=%s error=%s",
+            incident.service.name, exc,
+        )
 
 
 def _notify_recovery(incident: Incident):
-    """
-    TODO Fase 6: enviar e-mail de recuperação para administradores do System.
+    from apps.helper.notifications import notify_incident_recovered
 
-    Regras:
-    - Verificar MaintenanceWindow ativa antes de enviar.
-    - Registrar recovery_notification_sent_at após envio.
-    """
-    logger.info(
-        "[STUB] Notificação de recuperação pendente: service=%s incident=%s",
-        incident.service.name, incident.pk,
-    )
+    try:
+        notify_incident_recovered(incident)
+    except Exception as exc:
+        logger.error(
+            "Falha ao enviar notificação de recuperação: service=%s error=%s",
+            incident.service.name, exc,
+        )

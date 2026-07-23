@@ -247,10 +247,11 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
 
 Q_CLUSTER = {
     "name": "helper",
-    "workers": 2,
-    "timeout": 60 * 60,  # 1 hour
-    "retry": 60 * 60 + 5,
-    "redis": config("REDIS_URL", default="redis://redis:6379/0"),
+    "workers": 4,
+    "timeout": 60,        # cada task tem 60s para executar
+    "retry": 65,          # task falha → retenta após 65s (ligeiramente acima do timeout)
+    "orm": "default",
+    # "redis": config("REDIS_URL", default="redis://redis:6379/0"),
 }
 
 
@@ -333,3 +334,10 @@ URL_CAS_SERVER_URL = CAS_SERVER_URL.replace("/cas/", "/")
 FRONTEND_AUTH_REDIRECT = config(
     "FRONTEND_AUTH_REDIRECT", default="http://localhost:8000/auth"
 )
+
+####
+# HELPER EXTERNAL API AUTH
+###
+
+HELPER_API_AUTH_EMAIL = config("HELPER_API_AUTH_EMAIL", default="")
+HELPER_API_AUTH_PASSWORD = config("HELPER_API_AUTH_PASSWORD", default="")

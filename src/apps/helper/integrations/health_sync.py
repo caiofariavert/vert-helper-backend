@@ -30,7 +30,7 @@ def sync_health_for_application(application: Application, force_refresh: bool = 
     Retorna dict de resumo para uso no SyncLog e logging.
     """
     started_at: datetime = timezone.now()
-    client = ExternalApiClient(application.base_url)
+    client = ExternalApiClient(application)
     summary = {"created": 0, "updated": 0, "inactivated": 0, "errors": []}
 
     try:

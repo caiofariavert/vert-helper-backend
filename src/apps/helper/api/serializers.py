@@ -26,13 +26,20 @@ class SystemSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.ModelSerializer):
     system = serializers.SlugRelatedField(read_only=True, slug_field="slug")
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = [
             "id", "name", "slug", "base_url", "environment",
-            "system", "is_active", "created_at", "updated_at",
+            "system", "status", "is_active", "created_at", "updated_at",
         ]
+
+    def get_status(self, obj):
+        has_failed_service = getattr(obj, "has_failed_service", None)
+        if has_failed_service is None:
+            has_failed_service = obj.services.filter(status=Service.STATUS_FAILED).exists()
+        return Service.STATUS_FAILED if has_failed_service else Service.STATUS_OK
 
 
 class ServiceSerializer(serializers.ModelSerializer):

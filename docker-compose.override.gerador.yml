@@ -1,0 +1,41 @@
+volumes:
+  data:
+
+services:
+  db-helper-backend:
+    image: postgres:14-alpine
+    env_file: ./src/.env
+    ports:
+      - 54321:5432
+    volumes:
+      - ./src:/app
+  helper-backend:
+    build:
+      context: ./src
+      dockerfile: ./Dockerfile-dev
+    environment:
+      DJANGO_SETTINGS_MODULE: conf.settings
+    ports:
+      - 5000:5000
+    volumes:
+      - ./src:/app
+    depends_on:
+      - db-helper-backend
+  djangoq-helper-backend:
+    build:
+      context: ./src
+      dockerfile: ./Dockerfile-dev
+    command: python manage.py qcluster
+    volumes:
+      - ./src:/app
+    depends_on:
+      - helper-backend
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+
+networks:
+  default:
+    external:
+      name: vertc-gerador-documentos-backend_default

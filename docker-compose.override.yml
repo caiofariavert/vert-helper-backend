@@ -16,7 +16,7 @@ services:
     environment:
       DJANGO_SETTINGS_MODULE: conf.settings
     ports:
-      - 8080:8080
+      - 8080:5000
     volumes:
       - ./src:/app
     depends_on:

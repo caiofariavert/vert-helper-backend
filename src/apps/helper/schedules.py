@@ -1,12 +1,17 @@
 """
-Gerenciamento de Schedules do Django-Q2 por Application.
+Gerenciamento de Schedules do Django-Q2 por Application e globais.
 
-Cada Application possui dois schedules:
-  - health-{slug}: sync de saúde + serviços a cada 10 minutos
-  - actions-{slug}: sync de ações 1 vez por dia
+Schedules por Application (criados via Admin action):
+  - helper:health:{slug}   → sync de saúde + serviços a cada 10 minutos
+  - helper:actions:{slug}  → sync de ações 1 vez por dia
 
-Os schedules são criados/ativados via Admin action e desativados
-quando a Application é inativada.
+Schedules globais (criados via management command setup_helper_schedules):
+  - helper:cleanup:health-check-logs → limpeza de HealthCheckLogs > 90 dias, 1 vez por dia
+
+Política de retry (configurada no Q_CLUSTER):
+  - timeout: 60s por task
+  - retry: 65s de intervalo entre tentativas
+  - attempts por schedule: 3 (health/actions) ou 1 (cleanup)
 """
 
 import json
@@ -18,10 +23,9 @@ logger = logging.getLogger(__name__)
 
 HEALTH_SCHEDULE_PREFIX = "helper:health:"
 ACTIONS_SCHEDULE_PREFIX = "helper:actions:"
+CLEANUP_SCHEDULE_NAME = "helper:cleanup:health-check-logs"
 
-# Retry: 3 tentativas com 1 minuto de intervalo
 RETRY_ATTEMPTS = 3
-RETRY_INTERVAL_SECONDS = 60
 
 
 def _health_schedule_name(application) -> str:
@@ -35,7 +39,6 @@ def _actions_schedule_name(application) -> str:
 def create_application_schedules(application) -> dict:
     """
     Cria ou reativa os dois schedules de uma Application.
-
     Retorna dict com as instâncias criadas/atualizadas.
     """
     application_id = str(application.id)
@@ -49,7 +52,6 @@ def create_application_schedules(application) -> dict:
             "schedule_type": Schedule.MINUTES,
             "minutes": 10,
             "repeats": -1,
-            "attempts": RETRY_ATTEMPTS,
         },
     )
 
@@ -60,7 +62,6 @@ def create_application_schedules(application) -> dict:
             "kwargs": kwargs_str,
             "schedule_type": Schedule.DAILY,
             "repeats": -1,
-            "attempts": RETRY_ATTEMPTS,
         },
     )
 
@@ -71,10 +72,7 @@ def create_application_schedules(application) -> dict:
         "criado" if actions_created else "atualizado",
     )
 
-    return {
-        "health": health_schedule,
-        "actions": actions_schedule,
-    }
+    return {"health": health_schedule, "actions": actions_schedule}
 
 
 def deactivate_application_schedules(application):
@@ -94,3 +92,24 @@ def deactivate_application_schedules(application):
         application.slug,
         updated,
     )
+
+
+def create_global_schedules():
+    """
+    Cria ou reativa os schedules globais do Helper.
+    Chamado pelo management command setup_helper_schedules.
+    """
+    schedule, created = Schedule.objects.update_or_create(
+        name=CLEANUP_SCHEDULE_NAME,
+        defaults={
+            "func": "apps.helper.tasks.cleanup_health_check_logs",
+            "schedule_type": Schedule.DAILY,
+            "repeats": -1,
+        },
+    )
+
+    logger.info(
+        "Schedule global cleanup: %s",
+        "criado" if created else "atualizado",
+    )
+    return schedule

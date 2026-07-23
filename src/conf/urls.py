@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from .cas_wrapper import APILoginView
 
@@ -18,6 +18,7 @@ urlpatterns = [
         name="cas_ng_logout",
     ),
     path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("", include("apps.user.urls")),
     path("", include("apps.main.urls")),
     path("", include("apps.helper.urls")),

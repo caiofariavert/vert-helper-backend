@@ -129,6 +129,35 @@ Checklist:
 
 ---
 
+## Fase 4.1 - Autenticacao nas APIs Externas (JWT)
+
+Objetivo: permitir que o Helper se autentique nas APIs dos sistemas monitorados antes de consulta-las.
+
+Entregaveis:
+
+- Campo auth_type no model Application (NONE, BEARER, JWT) — cadastrado via Admin.
+- Variaveis de ambiente globais de credencial:
+  - HELPER_API_AUTH_EMAIL
+  - HELPER_API_AUTH_PASSWORD
+- Endpoint de autenticacao no sistema externo: POST /api/helper/v1/auth/
+  - Request: { email, password }
+  - Response: { access_token, refresh_token }
+- ExternalApiClient atualizado:
+  - Obtem token via POST /api/helper/v1/auth/ com credenciais do settings.
+  - Token cacheado no Django cache por application (TTL: 50 min).
+  - Header Authorization: {auth_type} {access_token} em todas as rotas autenticadas.
+  - Em 401: invalida cache, reautentica e retenta uma vez.
+  - /api/helper/v1/app-health/ nunca recebe autenticacao.
+- Migration 0002 gerada.
+
+Checklist:
+
+- Aplicacoes com auth_type=NONE continuam funcionando sem alteracao.
+- Token e reutilizado entre requests da mesma execucao de job.
+- Falha de autenticacao registra erro em SyncLog e nao propaga para outros sistemas.
+
+---
+
 ## Fase 4 - Integracao Externa e Sincronizacao
 
 Objetivo: sincronizar dados vindos dos sistemas monitorados.
@@ -214,7 +243,6 @@ Entregaveis:
 
 Checklist:
 
-- Login via SSO funcionando fim-a-fim.
 - JWT aceito nas APIs locais.
 - Usuario sem superuser nao acessa rotas funcionais.
 
@@ -230,13 +258,11 @@ Entregaveis:
 - Testes de jobs principais com cenarios de falha e retry.
 - Testes de permissao e auditoria.
 - Validacao de logs JSON.
-- Revisao de configuracao por ambiente (STG/HML/PRD).
 
 Checklist:
 
 - Suite minima de testes verde.
 - Sem erros criticos pendentes em fluxo principal.
-- Plano de rollback documentado para deploy inicial.
 
 ---
 
