@@ -251,12 +251,13 @@ Checklist:
 
 ## 5. Sequencia de Entrega Recomendada
 
-1. Fase 0 + Fase 1
-2. Fase 2 + Fase 3
-3. Fase 4 + Fase 5
+1. Fase 0 + Fase 1 ✅
+2. Fase 2 + Fase 3 ✅
+3. Fase 4 + Fase 5 ✅ (Fase 4 concluída)
 4. Fase 6
 5. Fase 7
 6. Fase 8
+7. Fase 9
 
 ---
 
@@ -279,3 +280,67 @@ Iniciar Fase 0 e Fase 1 em paralelo leve:
 - atualizar variaveis necessarias em src/.env.sample;
 - criar apps/modelos do dominio do Helper;
 - preparar migrations iniciais e configuracao de Admin.
+
+---
+
+## Fase 9 - Documentacao de Termos e APIs para o Frontend
+
+Objetivo: produzir um documento completo e autocontido que permita o time de frontend consumir o Helper sem precisar consultar o backend.
+
+Entregaveis:
+
+### 9.1 Glossario de Termos
+
+- Definicao objetiva de cada entidade: Ecosystem, System, Application, Service, Action, Incident.
+- Relacao entre entidades com exemplos praticos (ex: "uma Application pertence a um System e pode ter N Services").
+- Status possiveis de Service (OK, FAILED, UNKNOWN) e de App (stable, failed).
+- Definicao de is_recommended e quando ele e verdadeiro.
+
+### 9.2 Guia de Autenticacao
+
+- Fluxo completo CAS + SimpleJWT passo a passo.
+- Como obter o token JWT apos login.
+- Como enviar o token nas requisicoes (header Authorization: JWT <token>).
+- Variaveis de ambiente relevantes para o frontend: CAS_SERVER_URL, FRONTEND_AUTH_REDIRECT.
+
+### 9.3 Contrato das APIs Locais do Helper
+
+Para cada endpoint:
+- Metodo, URL e autenticacao necessaria.
+- Todos os query params disponiveis (busca, filtros, ordenacao, paginacao).
+- Payload de request (quando aplicavel).
+- Payload de response com todos os campos tipados.
+- Codigos de status possiveis e seus significados.
+- Exemplos de request e response completos.
+
+Endpoints documentados:
+- GET /api/helper/v1/health/
+- GET /api/helper/v1/ecosystems/
+- GET /api/helper/v1/ecosystems/<slug>/
+- GET /api/helper/v1/systems/
+- GET /api/helper/v1/systems/<slug>/
+- GET /api/helper/v1/applications/
+- GET /api/helper/v1/applications/<slug>/
+- GET /api/helper/v1/actions/
+- GET /api/helper/v1/actions/<slug>/
+- POST /api/helper/v1/actions/<slug>/execute/
+
+### 9.4 Guia de Uso do Formulario Dinamico de Execucao
+
+- Estrutura do campo questions_schema (id, label, type, options, is_required, parent_question, parent_value, action_kwarg).
+- Como renderizar perguntas condicionais com base em parent_question/parent_value.
+- Como montar o payload de execute com as respostas.
+- Tipos de perguntas suportados (radio, text) e como renderizar cada um.
+- Exemplo completo de schema e payload de execucao correspondente.
+
+### 9.5 Interpretacao das Respostas de Execucao
+
+- Formato de resposta success, error e info.
+- Como exibir steps no frontend.
+- O campo details nao e retornado ao frontend (armazenado somente no log).
+
+Checklist:
+
+- Documento revisado por alguem do time de frontend antes de iniciar desenvolvimento.
+- Exemplos testados contra a API real em ambiente STG.
+- Qualquer divergencia entre o documento e a API corrigida antes do inicio do front.

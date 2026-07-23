@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("", include("apps.user.urls")),
     path("", include("apps.main.urls")),
+    path("", include("apps.helper.urls")),
 ]
 
 if settings.LOCAL_ENV:

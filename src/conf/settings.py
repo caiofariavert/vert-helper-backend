@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     # my apps
     "apps.main",
     "apps.user",
+    "apps.helper",
 ]
 
 AUTH_USER_MODEL = "user.User"
@@ -245,11 +246,11 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
 ###
 
 Q_CLUSTER = {
-    "name": "cluster",
+    "name": "helper",
     "workers": 2,
-    "timeout": 60 * 60 * 24,  # 1 day
-    "retry": 60 * 60 * 24 + 5,  # 1 day 5 seconds
-    "orm": "default",
+    "timeout": 60 * 60,  # 1 hour
+    "retry": 60 * 60 + 5,
+    "redis": config("REDIS_URL", default="redis://redis:6379/0"),
 }
 
 
@@ -287,6 +288,7 @@ EMAIL_FROM = config("EMAIL_FROM", default="test@test.com")
 FACTORY_ONLY_APPS = [
     "main",
     "user",
+    "helper",
 ]
 
 FACTORY_IGNORE_INIT_IMPORT = True
