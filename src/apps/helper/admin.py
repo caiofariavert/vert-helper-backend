@@ -16,7 +16,6 @@ from .models import (
 )
 from .schedules import create_application_schedules, deactivate_application_schedules
 
-
 # ---------------------------------------------------------------------------
 # Mixins
 # ---------------------------------------------------------------------------
@@ -64,9 +63,7 @@ class SoftDeleteAdmin(admin.ModelAdmin):
             return format_html(
                 '<span style="color:#c0392b;font-weight:bold;">Inativo</span>'
             )
-        return format_html(
-            '<span style="color:#27ae60;font-weight:bold;">Ativo</span>'
-        )
+        return format_html('<span style="color:#27ae60;font-weight:bold;">Ativo</span>')
 
     status_badge.short_description = "Status"
 
@@ -110,7 +107,16 @@ class SystemAdmin(SoftDeleteAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(SoftDeleteAdmin):
-    list_display = ["name", "slug", "environment", "auth_type", "system", "base_url", "status_badge", "created_at"]
+    list_display = [
+        "name",
+        "slug",
+        "environment",
+        "auth_type",
+        "system",
+        "base_url",
+        "status_badge",
+        "created_at",
+    ]
     list_filter = ["is_active", "environment", "system"]
     search_fields = ["name", "slug", "base_url"]
     prepopulated_fields = {"slug": ("name",)}
@@ -139,7 +145,9 @@ class ApplicationAdmin(SoftDeleteAdmin):
         for application in queryset:
             deactivate_application_schedules(application)
             count += 1
-        self.message_user(request, f"Agendamentos desativados para {count} aplicação(ões).")
+        self.message_user(
+            request, f"Agendamentos desativados para {count} aplicação(ões)."
+        )
 
     @admin.action(description="⚡ Forçar sync de saúde imediato (Django-Q)")
     def force_sync_health_action(self, request, queryset):
@@ -165,12 +173,25 @@ class ServiceAdmin(SoftDeleteAdmin):
     list_display = ["name", "application", "status", "last_checked_at", "status_badge"]
     list_filter = ["is_active", "status", "application__system"]
     search_fields = ["name", "application__name"]
-    readonly_fields = ["last_checked_at", "last_status_change_at", "created_at", "updated_at", "deleted_at"]
+    readonly_fields = [
+        "last_checked_at",
+        "last_status_change_at",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    ]
 
 
 @admin.register(Action)
 class ActionAdmin(SoftDeleteAdmin):
-    list_display = ["name", "slug", "application", "source_version", "status_badge", "created_at"]
+    list_display = [
+        "name",
+        "slug",
+        "application",
+        "source_version",
+        "status_badge",
+        "created_at",
+    ]
     list_filter = ["is_active", "application__system", "application"]
     search_fields = ["name", "slug", "application__name"]
     filter_horizontal = ["services"]
@@ -185,16 +206,24 @@ class ActionAdmin(SoftDeleteAdmin):
 @admin.register(Incident)
 class IncidentAdmin(admin.ModelAdmin):
     list_display = [
-        "service", "current_status", "previous_status",
-        "opened_at", "recovered_at", "is_active",
+        "service",
+        "current_status",
+        "previous_status",
+        "opened_at",
+        "recovered_at",
+        "is_active",
         "notification_sent_at",
     ]
     list_filter = ["is_active", "current_status", "service__application__system"]
     search_fields = ["service__name", "service__application__name"]
     readonly_fields = [
-        "service", "previous_status", "current_status",
-        "opened_at", "recovered_at",
-        "notification_sent_at", "recovery_notification_sent_at",
+        "service",
+        "previous_status",
+        "current_status",
+        "opened_at",
+        "recovered_at",
+        "notification_sent_at",
+        "recovery_notification_sent_at",
     ]
 
     def has_add_permission(self, request):
@@ -210,31 +239,68 @@ class HealthCheckLogAdmin(ReadOnlyLogAdmin):
     list_filter = ["status", "application__system", "application"]
     search_fields = ["service_name", "application__name"]
     date_hierarchy = "checked_at"
-    readonly_fields = ["application", "service_name", "status", "message", "checked_at", "raw_payload"]
+    readonly_fields = [
+        "application",
+        "service_name",
+        "status",
+        "message",
+        "checked_at",
+        "raw_payload",
+    ]
 
 
 @admin.register(ActionExecutionLog)
 class ActionExecutionLogAdmin(ReadOnlyLogAdmin):
-    list_display = ["action", "executed_by", "result_status", "started_at", "finished_at"]
-    list_filter = ["result_status", "action__application__system", "action__application"]
+    list_display = [
+        "action",
+        "executed_by",
+        "result_status",
+        "started_at",
+        "finished_at",
+    ]
+    list_filter = [
+        "result_status",
+        "action__application__system",
+        "action__application",
+    ]
     search_fields = ["action__name", "executed_by__email"]
     date_hierarchy = "started_at"
     readonly_fields = [
-        "action", "executed_by", "input_payload", "mapped_kwargs",
-        "result_status", "result_message", "result_details",
-        "started_at", "finished_at", "raw_response",
+        "action",
+        "executed_by",
+        "input_payload",
+        "mapped_kwargs",
+        "result_status",
+        "result_message",
+        "result_details",
+        "started_at",
+        "finished_at",
+        "raw_response",
     ]
 
 
 @admin.register(SyncLog)
 class SyncLogAdmin(ReadOnlyLogAdmin):
-    list_display = ["application", "sync_type", "status", "attempt", "started_at", "finished_at"]
+    list_display = [
+        "application",
+        "sync_type",
+        "status",
+        "attempt",
+        "started_at",
+        "finished_at",
+    ]
     list_filter = ["sync_type", "status", "application__system", "application"]
     search_fields = ["application__name"]
     date_hierarchy = "started_at"
     readonly_fields = [
-        "application", "sync_type", "status",
-        "started_at", "finished_at", "attempt", "message", "raw_payload",
+        "application",
+        "sync_type",
+        "status",
+        "started_at",
+        "finished_at",
+        "attempt",
+        "message",
+        "raw_payload",
     ]
 
 

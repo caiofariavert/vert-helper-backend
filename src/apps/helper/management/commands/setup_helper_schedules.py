@@ -9,4 +9,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Configurando schedules globais do Helper...")
         create_global_schedules()
-        self.stdout.write(self.style.SUCCESS("Schedules globais do Helper configurados."))
+        self.stdout.write(
+            self.style.SUCCESS("Schedules globais do Helper configurados.")
+        )

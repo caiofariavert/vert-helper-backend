@@ -9,7 +9,6 @@ from apps.helper.models import (
     Service,
     System,
 )
-from apps.user.tests.factories import UserFactory
 
 
 class EcosystemFactory(factory.django.DjangoModelFactory):

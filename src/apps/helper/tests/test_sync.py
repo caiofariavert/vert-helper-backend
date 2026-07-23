@@ -1,9 +1,8 @@
 import pytest
-from django.utils import timezone
 from freezegun import freeze_time
 
-from apps.helper.integrations.health_sync import sync_health_for_application
 from apps.helper.integrations.action_sync import sync_actions_for_application
+from apps.helper.integrations.health_sync import sync_health_for_application
 from apps.helper.models import (
     Action,
     HealthCheckLog,
@@ -14,7 +13,6 @@ from apps.helper.models import (
 from apps.helper.tasks import cleanup_health_check_logs
 from apps.helper.tests.factories import ApplicationFactory, ServiceFactory
 
-
 # ---------------------------------------------------------------------------
 # Health sync
 # ---------------------------------------------------------------------------
@@ -24,12 +22,18 @@ from apps.helper.tests.factories import ApplicationFactory, ServiceFactory
 class TestSyncHealthForApplication:
 
     def _mock_ok(self, requests_mock, app):
-        requests_mock.get(f"{app.base_url}/api/helper/v1/app-health/", json={"status": "stable"})
+        requests_mock.get(
+            f"{app.base_url}/api/helper/v1/app-health/", json={"status": "stable"}
+        )
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/healthcare/",
             json={
                 "S3": {"status": "OK", "last_updated": "2024-01-01T00:00:00Z"},
-                "KAFKA": {"status": "FAILED", "message": "timeout", "last_updated": None},
+                "KAFKA": {
+                    "status": "FAILED",
+                    "message": "timeout",
+                    "last_updated": None,
+                },
             },
         )
 
@@ -63,7 +67,9 @@ class TestSyncHealthForApplication:
     def test_inactivates_services_absent_from_origin(self, db, requests_mock):
         app = ApplicationFactory()
         old_svc = ServiceFactory(application=app, name="REDIS")
-        requests_mock.get(f"{app.base_url}/api/helper/v1/app-health/", json={"status": "stable"})
+        requests_mock.get(
+            f"{app.base_url}/api/helper/v1/app-health/", json={"status": "stable"}
+        )
         requests_mock.get(f"{app.base_url}/api/helper/v1/healthcare/", json={})
 
         sync_health_for_application(app)
@@ -87,10 +93,18 @@ class TestSyncHealthForApplication:
     def test_opens_incident_on_status_change_to_failed(self, db, requests_mock):
         app = ApplicationFactory()
         ServiceFactory(application=app, name="DB", status=Service.STATUS_OK)
-        requests_mock.get(f"{app.base_url}/api/helper/v1/app-health/", json={"status": "stable"})
+        requests_mock.get(
+            f"{app.base_url}/api/helper/v1/app-health/", json={"status": "stable"}
+        )
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/healthcare/",
-            json={"DB": {"status": "FAILED", "message": "conn error", "last_updated": None}},
+            json={
+                "DB": {
+                    "status": "FAILED",
+                    "message": "conn error",
+                    "last_updated": None,
+                }
+            },
         )
 
         sync_health_for_application(app)
@@ -110,13 +124,29 @@ class TestSyncActionsForApplication:
         app = ApplicationFactory()
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/actions/",
-            json={"count": 1, "next": None, "results": [
-                {"slug": "my-action", "name": "My Action", "description": "", "services": [], "status": "active"},
-            ]},
+            json={
+                "count": 1,
+                "next": None,
+                "results": [
+                    {
+                        "slug": "my-action",
+                        "name": "My Action",
+                        "description": "",
+                        "services": [],
+                        "status": "active",
+                    },
+                ],
+            },
         )
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/actions/my-action/",
-            json={"slug": "my-action", "name": "My Action", "description": "", "services": [], "questions": []},
+            json={
+                "slug": "my-action",
+                "name": "My Action",
+                "description": "",
+                "services": [],
+                "questions": [],
+            },
         )
 
         sync_actions_for_application(app)
@@ -126,17 +156,37 @@ class TestSyncActionsForApplication:
     def test_increments_version_on_name_change(self, db, requests_mock):
         app = ApplicationFactory()
         action = Action.objects.create(
-            application=app, slug="my-action", name="Old Name", questions_schema=[], source_version=1
+            application=app,
+            slug="my-action",
+            name="Old Name",
+            questions_schema=[],
+            source_version=1,
         )
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/actions/",
-            json={"count": 1, "next": None, "results": [
-                {"slug": "my-action", "name": "New Name", "description": "", "services": [], "status": "active"},
-            ]},
+            json={
+                "count": 1,
+                "next": None,
+                "results": [
+                    {
+                        "slug": "my-action",
+                        "name": "New Name",
+                        "description": "",
+                        "services": [],
+                        "status": "active",
+                    },
+                ],
+            },
         )
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/actions/my-action/",
-            json={"slug": "my-action", "name": "New Name", "description": "", "services": [], "questions": []},
+            json={
+                "slug": "my-action",
+                "name": "New Name",
+                "description": "",
+                "services": [],
+                "questions": [],
+            },
         )
 
         sync_actions_for_application(app)
@@ -148,7 +198,11 @@ class TestSyncActionsForApplication:
     def test_inactivates_absent_actions(self, db, requests_mock):
         app = ApplicationFactory()
         action = Action.objects.create(
-            application=app, slug="old-action", name="Old", questions_schema=[], source_version=1
+            application=app,
+            slug="old-action",
+            name="Old",
+            questions_schema=[],
+            source_version=1,
         )
         requests_mock.get(
             f"{app.base_url}/api/helper/v1/actions/",
@@ -169,7 +223,9 @@ class TestSyncActionsForApplication:
 
         sync_actions_for_application(app)
 
-        assert SyncLog.objects.filter(application=app, sync_type=SyncLog.SYNC_ACTIONS).exists()
+        assert SyncLog.objects.filter(
+            application=app, sync_type=SyncLog.SYNC_ACTIONS
+        ).exists()
 
 
 # ---------------------------------------------------------------------------
@@ -185,6 +241,7 @@ class TestCleanupHealthCheckLogs:
 
         with freeze_time("2024-01-01"):
             from apps.helper.models import HealthCheckLog
+
             old = HealthCheckLog.objects.create(
                 application=app, service_name="DB", status="OK", raw_payload={}
             )
@@ -199,6 +256,7 @@ class TestCleanupHealthCheckLogs:
 
         with freeze_time("2024-01-01"):
             from apps.helper.models import HealthCheckLog
+
             recent = HealthCheckLog.objects.create(
                 application=app, service_name="DB", status="OK", raw_payload={}
             )

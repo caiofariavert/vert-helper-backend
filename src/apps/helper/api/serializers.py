@@ -19,8 +19,14 @@ class SystemSerializer(serializers.ModelSerializer):
     class Meta:
         model = System
         fields = [
-            "id", "name", "slug", "description",
-            "ecosystems", "is_active", "created_at", "updated_at",
+            "id",
+            "name",
+            "slug",
+            "description",
+            "ecosystems",
+            "is_active",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -31,14 +37,24 @@ class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = [
-            "id", "name", "slug", "base_url", "environment",
-            "system", "status", "is_active", "created_at", "updated_at",
+            "id",
+            "name",
+            "slug",
+            "base_url",
+            "environment",
+            "system",
+            "status",
+            "is_active",
+            "created_at",
+            "updated_at",
         ]
 
     def get_status(self, obj):
         has_failed_service = getattr(obj, "has_failed_service", None)
         if has_failed_service is None:
-            has_failed_service = obj.services.filter(status=Service.STATUS_FAILED).exists()
+            has_failed_service = obj.services.filter(
+                status=Service.STATUS_FAILED
+            ).exists()
         return Service.STATUS_FAILED if has_failed_service else Service.STATUS_OK
 
 
@@ -48,9 +64,16 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = [
-            "id", "name", "description", "status",
-            "last_checked_at", "last_status_change_at",
-            "application", "is_active", "created_at", "updated_at",
+            "id",
+            "name",
+            "description",
+            "status",
+            "last_checked_at",
+            "last_status_change_at",
+            "application",
+            "is_active",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -64,8 +87,14 @@ class ActionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
         fields = [
-            "id", "slug", "name", "description",
-            "services", "status", "is_recommended", "created_at",
+            "id",
+            "slug",
+            "name",
+            "description",
+            "services",
+            "status",
+            "is_recommended",
+            "created_at",
         ]
 
     def get_services(self, obj):
@@ -85,8 +114,14 @@ class ActionDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
         fields = [
-            "id", "slug", "name", "description",
-            "services", "status", "questions", "created_at",
+            "id",
+            "slug",
+            "name",
+            "description",
+            "services",
+            "status",
+            "questions",
+            "created_at",
         ]
 
     def get_services(self, obj):

@@ -122,7 +122,9 @@ class ExternalApiClient:
             logger.warning("401 recebido para %s — reautenticando.", url)
             self._invalidate_token_cache()
             self._ensure_auth_header(force=True)
-            response = getattr(self._session, method)(url, timeout=self.timeout, **kwargs)
+            response = getattr(self._session, method)(
+                url, timeout=self.timeout, **kwargs
+            )
 
         response.raise_for_status()
         return response
@@ -163,7 +165,8 @@ class ExternalApiClient:
         except requests.RequestException as exc:
             logger.error(
                 "Falha ao autenticar na application %s: %s",
-                self.application.slug, exc,
+                self.application.slug,
+                exc,
             )
             raise
 

@@ -2,14 +2,13 @@ import pytest
 
 from apps.helper.models import ActionExecutionLog
 from apps.helper.tests.factories import (
+    SIMPLE_QUESTIONS_SCHEMA,
     ActionFactory,
     ApplicationFactory,
     EcosystemFactory,
     ServiceFactory,
     SystemFactory,
-    SIMPLE_QUESTIONS_SCHEMA,
 )
-
 
 # ---------------------------------------------------------------------------
 # Health endpoint (sem autenticação)
@@ -118,7 +117,9 @@ class TestSystemListView:
         sys_a.ecosystems.add(eco_a)
         sys_b.ecosystems.add(eco_b)
 
-        response = superuser_client.get(f"/api/helper/v1/systems/?ecosystem={eco_a.slug}")
+        response = superuser_client.get(
+            f"/api/helper/v1/systems/?ecosystem={eco_a.slug}"
+        )
         slugs = [r["slug"] for r in response.data["results"]]
         assert sys_a.slug in slugs
         assert sys_b.slug not in slugs
@@ -164,7 +165,9 @@ class TestApplicationListStatus:
         ServiceFactory(application=app, status="OK")
         ServiceFactory(application=app, status="FAILED")
 
-        response = superuser_client.get("/api/helper/v1/applications/?search=App Failed")
+        response = superuser_client.get(
+            "/api/helper/v1/applications/?search=App Failed"
+        )
         assert response.status_code == 200
         result = next(r for r in response.data["results"] if r["slug"] == "app-failed")
         assert result["status"] == "FAILED"
@@ -221,7 +224,9 @@ class TestActionDetailView:
 
     def test_detail_includes_questions(self, superuser_client):
         app = ApplicationFactory()
-        action = ActionFactory(application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA)
+        action = ActionFactory(
+            application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA
+        )
 
         response = superuser_client.get(f"/api/helper/v1/actions/{action.slug}/")
         assert response.status_code == 200
@@ -239,7 +244,9 @@ class TestActionExecuteView:
 
     def test_invalid_questions_returns_400(self, superuser_client):
         app = ApplicationFactory()
-        action = ActionFactory(application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA)
+        action = ActionFactory(
+            application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA
+        )
 
         response = superuser_client.post(
             f"/api/helper/v1/actions/{action.slug}/execute/",
@@ -249,9 +256,13 @@ class TestActionExecuteView:
         assert response.status_code == 400
         assert "questions" in response.data
 
-    def test_valid_questions_calls_external_and_logs(self, superuser_client, superuser, requests_mock):
+    def test_valid_questions_calls_external_and_logs(
+        self, superuser_client, superuser, requests_mock
+    ):
         app = ApplicationFactory(base_url="http://external.example.com")
-        action = ActionFactory(application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA)
+        action = ActionFactory(
+            application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA
+        )
 
         requests_mock.post(
             "http://external.example.com/api/helper/v1/actions/execute/",
@@ -279,7 +290,9 @@ class TestActionExecuteView:
 
     def test_external_error_returns_422_and_logs(self, superuser_client, requests_mock):
         app = ApplicationFactory(base_url="http://external.example.com")
-        action = ActionFactory(application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA)
+        action = ActionFactory(
+            application=app, questions_schema=SIMPLE_QUESTIONS_SCHEMA
+        )
 
         requests_mock.post(
             f"http://external.example.com/api/helper/v1/actions/{action.slug}/execute/",

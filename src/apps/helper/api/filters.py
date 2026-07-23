@@ -24,9 +24,7 @@ class SystemFilter(django_filters.FilterSet):
 
 class ApplicationFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
-    system = django_filters.CharFilter(
-        field_name="system__slug", lookup_expr="exact"
-    )
+    system = django_filters.CharFilter(field_name="system__slug", lookup_expr="exact")
     ecosystem = django_filters.CharFilter(
         field_name="system__ecosystems__slug", lookup_expr="exact"
     )

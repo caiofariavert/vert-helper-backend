@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('helper', '0001_initial'),
+        ("helper", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='application',
-            name='auth_type',
-            field=models.CharField(choices=[('NONE', 'Sem autenticação'), ('BEARER', 'Bearer'), ('JWT', 'JWT')], default='NONE', help_text='Prefixo usado no header Authorization ao chamar as APIs externas.', max_length=10, verbose_name='Tipo de autenticação'),
+            model_name="application",
+            name="auth_type",
+            field=models.CharField(
+                choices=[
+                    ("NONE", "Sem autenticação"),
+                    ("BEARER", "Bearer"),
+                    ("JWT", "JWT"),
+                ],
+                default="NONE",
+                help_text="Prefixo usado no header Authorization ao chamar as APIs externas.",
+                max_length=10,
+                verbose_name="Tipo de autenticação",
+            ),
         ),
     ]

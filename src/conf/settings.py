@@ -248,8 +248,8 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
 Q_CLUSTER = {
     "name": "helper",
     "workers": 4,
-    "timeout": 60,        # cada task tem 60s para executar
-    "retry": 65,          # task falha → retenta após 65s (ligeiramente acima do timeout)
+    "timeout": 60,  # cada task tem 60s para executar
+    "retry": 65,  # task falha → retenta após 65s (ligeiramente acima do timeout)
     "orm": "default",
     # "redis": config("REDIS_URL", default="redis://redis:6379/0"),
 }

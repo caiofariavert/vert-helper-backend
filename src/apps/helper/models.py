@@ -241,9 +241,7 @@ class Incident(models.Model):
         related_name="incidents",
         verbose_name="Serviço",
     )
-    previous_status = models.CharField(
-        max_length=10, verbose_name="Status anterior"
-    )
+    previous_status = models.CharField(max_length=10, verbose_name="Status anterior")
     current_status = models.CharField(max_length=10, verbose_name="Status atual")
     opened_at = models.DateTimeField(auto_now_add=True, verbose_name="Aberto em")
     recovered_at = models.DateTimeField(
@@ -263,7 +261,9 @@ class Incident(models.Model):
         ordering = ["-opened_at"]
 
     def __str__(self):
-        return f"{self.service} — {self.current_status} ({self.opened_at:%Y-%m-%d %H:%M})"
+        return (
+            f"{self.service} — {self.current_status} ({self.opened_at:%Y-%m-%d %H:%M})"
+        )
 
 
 class HealthCheckLog(models.Model):
@@ -382,9 +382,7 @@ class SyncLog(models.Model):
     finished_at = models.DateTimeField(
         null=True, blank=True, verbose_name="Finalizado em"
     )
-    attempt = models.PositiveSmallIntegerField(
-        default=1, verbose_name="Tentativa"
-    )
+    attempt = models.PositiveSmallIntegerField(default=1, verbose_name="Tentativa")
     message = models.TextField(blank=True, verbose_name="Mensagem")
     raw_payload = models.JSONField(
         default=dict, blank=True, verbose_name="Payload bruto"

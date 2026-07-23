@@ -23,7 +23,9 @@ from .incident_manager import handle_service_status_change
 logger = logging.getLogger(__name__)
 
 
-def sync_health_for_application(application: Application, force_refresh: bool = False) -> dict:
+def sync_health_for_application(
+    application: Application, force_refresh: bool = False
+) -> dict:
     """
     Executa health check + sync de serviços para uma Application.
 
@@ -36,17 +38,32 @@ def sync_health_for_application(application: Application, force_refresh: bool = 
     try:
         healthcare_data = _fetch_healthcare(client, application, force_refresh, summary)
     except Exception as exc:
-        _persist_sync_log(application, SyncLog.SYNC_SERVICES, SyncLog.STATUS_ERROR, started_at, str(exc), {})
+        _persist_sync_log(
+            application,
+            SyncLog.SYNC_SERVICES,
+            SyncLog.STATUS_ERROR,
+            started_at,
+            str(exc),
+            {},
+        )
         raise
 
     _reconcile_services(application, healthcare_data, summary)
     _persist_sync_log(
-        application, SyncLog.SYNC_SERVICES, SyncLog.STATUS_SUCCESS, started_at, "", summary
+        application,
+        SyncLog.SYNC_SERVICES,
+        SyncLog.STATUS_SUCCESS,
+        started_at,
+        "",
+        summary,
     )
 
     logger.info(
         "sync_health: app=%s criados=%d atualizados=%d inativados=%d",
-        application.slug, summary["created"], summary["updated"], summary["inactivated"],
+        application.slug,
+        summary["created"],
+        summary["updated"],
+        summary["inactivated"],
     )
     return summary
 
@@ -56,7 +73,12 @@ def sync_health_for_application(application: Application, force_refresh: bool = 
 # ---------------------------------------------------------------------------
 
 
-def _fetch_healthcare(client: ExternalApiClient, application: Application, force_refresh: bool, summary: dict) -> dict:
+def _fetch_healthcare(
+    client: ExternalApiClient,
+    application: Application,
+    force_refresh: bool,
+    summary: dict,
+) -> dict:
     """
     Consulta app-health e healthcare.
     Se app-health retornar failed ou falhar, trata todos como FAILED.
@@ -66,8 +88,14 @@ def _fetch_healthcare(client: ExternalApiClient, application: Application, force
     try:
         app_health = client.get_app_health()
         if app_health.get("status") == "failed":
-            logger.warning("app-health FAILED para %s: %s", application.slug, app_health.get("message"))
-            return _mark_all_as_failed(application, app_health.get("message", "App health failed"))
+            logger.warning(
+                "app-health FAILED para %s: %s",
+                application.slug,
+                app_health.get("message"),
+            )
+            return _mark_all_as_failed(
+                application, app_health.get("message", "App health failed")
+            )
     except requests.RequestException as exc:
         logger.error("app-health indisponível para %s: %s", application.slug, exc)
         return _mark_all_as_failed(application, str(exc))
@@ -84,7 +112,11 @@ def _mark_all_as_failed(application: Application, message: str) -> dict:
     """Monta dict de healthcare com FAILED para todos os serviços ativos."""
     names = application.services.values_list("name", flat=True)
     return {
-        name: {"status": Service.STATUS_FAILED, "message": message, "last_updated": None}
+        name: {
+            "status": Service.STATUS_FAILED,
+            "message": message,
+            "last_updated": None,
+        }
         for name in names
     }
 
@@ -107,7 +139,11 @@ def _reconcile_services(application: Application, healthcare_data: dict, summary
         service, created = Service.all_objects.get_or_create(
             application=application,
             name=service_name,
-            defaults={"status": new_status, "last_checked_at": now, "last_status_change_at": now},
+            defaults={
+                "status": new_status,
+                "last_checked_at": now,
+                "last_status_change_at": now,
+            },
         )
 
         if created:
@@ -126,10 +162,16 @@ def _reconcile_services(application: Application, healthcare_data: dict, summary
                 summary["updated"] += 1
                 handle_service_status_change(service, previous_status, new_status)
 
-            service.save(update_fields=[
-                "status", "last_checked_at", "last_status_change_at",
-                "is_active", "deleted_at", "updated_at",
-            ])
+            service.save(
+                update_fields=[
+                    "status",
+                    "last_checked_at",
+                    "last_status_change_at",
+                    "is_active",
+                    "deleted_at",
+                    "updated_at",
+                ]
+            )
 
         HealthCheckLog.objects.create(
             application=application,
@@ -140,10 +182,8 @@ def _reconcile_services(application: Application, healthcare_data: dict, summary
         )
 
     # Inativar serviços que não apareceram no payload
-    missing = (
-        Service.objects
-        .filter(application=application)
-        .exclude(name__in=seen_names)
+    missing = Service.objects.filter(application=application).exclude(
+        name__in=seen_names
     )
     for service in missing:
         previous_status = service.status

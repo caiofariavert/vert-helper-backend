@@ -20,6 +20,7 @@ class APILoginView(cas_views.LoginView):
     - O acesso às rotas funcionais do Helper exige is_superuser=True.
     - A promoção de usuário a superusuário deve ser feita manualmente via Django Admin.
     """
+
     def successful_login(self, request: HttpRequest, next_page: str) -> HttpResponse:
         """
         This method is called on successful login. Override this method for

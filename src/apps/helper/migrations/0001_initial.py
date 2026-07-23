@@ -16,233 +16,658 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Action',
+            name="Action",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True, verbose_name='Deletado em')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Criado em')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Atualizado em')),
-                ('slug', models.SlugField(max_length=255, verbose_name='Slug')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('description', models.TextField(blank=True, verbose_name='Descrição')),
-                ('questions_schema', models.JSONField(blank=True, default=list, verbose_name='Schema de perguntas')),
-                ('source_version', models.PositiveIntegerField(default=1, verbose_name='Versão da origem')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "deleted_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Deletado em"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Criado em"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Atualizado em"),
+                ),
+                ("slug", models.SlugField(max_length=255, verbose_name="Slug")),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                ("description", models.TextField(blank=True, verbose_name="Descrição")),
+                (
+                    "questions_schema",
+                    models.JSONField(
+                        blank=True, default=list, verbose_name="Schema de perguntas"
+                    ),
+                ),
+                (
+                    "source_version",
+                    models.PositiveIntegerField(
+                        default=1, verbose_name="Versão da origem"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Ação',
-                'verbose_name_plural': 'Ações',
-                'ordering': ['name'],
+                "verbose_name": "Ação",
+                "verbose_name_plural": "Ações",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Application',
+            name="Application",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True, verbose_name='Deletado em')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Criado em')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Atualizado em')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('slug', models.SlugField(max_length=255, unique=True, verbose_name='Slug')),
-                ('base_url', models.URLField(max_length=500, verbose_name='URL Base')),
-                ('environment', models.CharField(choices=[('STG', 'Staging'), ('HML', 'Homologação'), ('PRD', 'Produção')], max_length=3, verbose_name='Ambiente')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "deleted_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Deletado em"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Criado em"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Atualizado em"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, unique=True, verbose_name="Slug"),
+                ),
+                ("base_url", models.URLField(max_length=500, verbose_name="URL Base")),
+                (
+                    "environment",
+                    models.CharField(
+                        choices=[
+                            ("STG", "Staging"),
+                            ("HML", "Homologação"),
+                            ("PRD", "Produção"),
+                        ],
+                        max_length=3,
+                        verbose_name="Ambiente",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Aplicação',
-                'verbose_name_plural': 'Aplicações',
-                'ordering': ['name'],
+                "verbose_name": "Aplicação",
+                "verbose_name_plural": "Aplicações",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Ecosystem',
+            name="Ecosystem",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True, verbose_name='Deletado em')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Criado em')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Atualizado em')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('slug', models.SlugField(max_length=255, unique=True, verbose_name='Slug')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "deleted_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Deletado em"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Criado em"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Atualizado em"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, unique=True, verbose_name="Slug"),
+                ),
             ],
             options={
-                'verbose_name': 'Ecossistema',
-                'verbose_name_plural': 'Ecossistemas',
-                'ordering': ['name'],
+                "verbose_name": "Ecossistema",
+                "verbose_name_plural": "Ecossistemas",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='MaintenanceWindow',
+            name="MaintenanceWindow",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('start_at', models.DateTimeField(verbose_name='Início')),
-                ('end_at', models.DateTimeField(verbose_name='Fim')),
-                ('scope_type', models.CharField(choices=[('global', 'Global'), ('system', 'Sistema'), ('application', 'Aplicação')], default='global', max_length=15, verbose_name='Escopo')),
-                ('scope_id', models.UUIDField(blank=True, null=True, verbose_name='ID do escopo (Sistema ou Aplicação)')),
-                ('reason', models.TextField(blank=True, verbose_name='Motivo')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                ("start_at", models.DateTimeField(verbose_name="Início")),
+                ("end_at", models.DateTimeField(verbose_name="Fim")),
+                (
+                    "scope_type",
+                    models.CharField(
+                        choices=[
+                            ("global", "Global"),
+                            ("system", "Sistema"),
+                            ("application", "Aplicação"),
+                        ],
+                        default="global",
+                        max_length=15,
+                        verbose_name="Escopo",
+                    ),
+                ),
+                (
+                    "scope_id",
+                    models.UUIDField(
+                        blank=True,
+                        null=True,
+                        verbose_name="ID do escopo (Sistema ou Aplicação)",
+                    ),
+                ),
+                ("reason", models.TextField(blank=True, verbose_name="Motivo")),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
             ],
             options={
-                'verbose_name': 'Janela de Manutenção',
-                'verbose_name_plural': 'Janelas de Manutenção',
-                'ordering': ['-start_at'],
+                "verbose_name": "Janela de Manutenção",
+                "verbose_name_plural": "Janelas de Manutenção",
+                "ordering": ["-start_at"],
             },
         ),
         migrations.CreateModel(
-            name='ActionExecutionLog',
+            name="ActionExecutionLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('input_payload', models.JSONField(default=dict, verbose_name='Payload de entrada')),
-                ('mapped_kwargs', models.JSONField(default=dict, verbose_name='Kwargs mapeados')),
-                ('result_status', models.CharField(choices=[('success', 'Sucesso'), ('error', 'Erro'), ('info', 'Informação')], max_length=10, verbose_name='Status do resultado')),
-                ('result_message', models.TextField(blank=True, verbose_name='Mensagem')),
-                ('result_details', models.TextField(blank=True, verbose_name='Detalhes técnicos (interno)')),
-                ('started_at', models.DateTimeField(verbose_name='Iniciado em')),
-                ('finished_at', models.DateTimeField(blank=True, null=True, verbose_name='Finalizado em')),
-                ('raw_response', models.JSONField(blank=True, default=dict, verbose_name='Resposta bruta')),
-                ('action', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='execution_logs', to='helper.action', verbose_name='Ação')),
-                ('executed_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='action_executions', to=settings.AUTH_USER_MODEL, verbose_name='Executado por')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "input_payload",
+                    models.JSONField(default=dict, verbose_name="Payload de entrada"),
+                ),
+                (
+                    "mapped_kwargs",
+                    models.JSONField(default=dict, verbose_name="Kwargs mapeados"),
+                ),
+                (
+                    "result_status",
+                    models.CharField(
+                        choices=[
+                            ("success", "Sucesso"),
+                            ("error", "Erro"),
+                            ("info", "Informação"),
+                        ],
+                        max_length=10,
+                        verbose_name="Status do resultado",
+                    ),
+                ),
+                (
+                    "result_message",
+                    models.TextField(blank=True, verbose_name="Mensagem"),
+                ),
+                (
+                    "result_details",
+                    models.TextField(
+                        blank=True, verbose_name="Detalhes técnicos (interno)"
+                    ),
+                ),
+                ("started_at", models.DateTimeField(verbose_name="Iniciado em")),
+                (
+                    "finished_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Finalizado em"
+                    ),
+                ),
+                (
+                    "raw_response",
+                    models.JSONField(
+                        blank=True, default=dict, verbose_name="Resposta bruta"
+                    ),
+                ),
+                (
+                    "action",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="execution_logs",
+                        to="helper.action",
+                        verbose_name="Ação",
+                    ),
+                ),
+                (
+                    "executed_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="action_executions",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Executado por",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Log de Execução de Ação',
-                'verbose_name_plural': 'Logs de Execução de Ações',
-                'ordering': ['-started_at'],
+                "verbose_name": "Log de Execução de Ação",
+                "verbose_name_plural": "Logs de Execução de Ações",
+                "ordering": ["-started_at"],
             },
         ),
         migrations.AddField(
-            model_name='action',
-            name='application',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='actions', to='helper.application', verbose_name='Aplicação'),
+            model_name="action",
+            name="application",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="actions",
+                to="helper.application",
+                verbose_name="Aplicação",
+            ),
         ),
         migrations.CreateModel(
-            name='Service',
+            name="Service",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True, verbose_name='Deletado em')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Criado em')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Atualizado em')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('description', models.TextField(blank=True, verbose_name='Descrição')),
-                ('status', models.CharField(choices=[('OK', 'OK'), ('FAILED', 'Falha'), ('UNKNOWN', 'Desconhecido')], default='UNKNOWN', max_length=10, verbose_name='Status')),
-                ('last_checked_at', models.DateTimeField(blank=True, null=True, verbose_name='Última verificação')),
-                ('last_status_change_at', models.DateTimeField(blank=True, null=True, verbose_name='Última mudança de status')),
-                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='services', to='helper.application', verbose_name='Aplicação')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "deleted_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Deletado em"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Criado em"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Atualizado em"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                ("description", models.TextField(blank=True, verbose_name="Descrição")),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("OK", "OK"),
+                            ("FAILED", "Falha"),
+                            ("UNKNOWN", "Desconhecido"),
+                        ],
+                        default="UNKNOWN",
+                        max_length=10,
+                        verbose_name="Status",
+                    ),
+                ),
+                (
+                    "last_checked_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Última verificação"
+                    ),
+                ),
+                (
+                    "last_status_change_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Última mudança de status"
+                    ),
+                ),
+                (
+                    "application",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="services",
+                        to="helper.application",
+                        verbose_name="Aplicação",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Serviço',
-                'verbose_name_plural': 'Serviços',
-                'ordering': ['name'],
+                "verbose_name": "Serviço",
+                "verbose_name_plural": "Serviços",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Incident',
+            name="Incident",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('previous_status', models.CharField(max_length=10, verbose_name='Status anterior')),
-                ('current_status', models.CharField(max_length=10, verbose_name='Status atual')),
-                ('opened_at', models.DateTimeField(auto_now_add=True, verbose_name='Aberto em')),
-                ('recovered_at', models.DateTimeField(blank=True, null=True, verbose_name='Recuperado em')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('notification_sent_at', models.DateTimeField(blank=True, null=True, verbose_name='Notificação enviada em')),
-                ('recovery_notification_sent_at', models.DateTimeField(blank=True, null=True, verbose_name='Notif. recuperação enviada em')),
-                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='incidents', to='helper.service', verbose_name='Serviço')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "previous_status",
+                    models.CharField(max_length=10, verbose_name="Status anterior"),
+                ),
+                (
+                    "current_status",
+                    models.CharField(max_length=10, verbose_name="Status atual"),
+                ),
+                (
+                    "opened_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Aberto em"),
+                ),
+                (
+                    "recovered_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Recuperado em"
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "notification_sent_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Notificação enviada em"
+                    ),
+                ),
+                (
+                    "recovery_notification_sent_at",
+                    models.DateTimeField(
+                        blank=True,
+                        null=True,
+                        verbose_name="Notif. recuperação enviada em",
+                    ),
+                ),
+                (
+                    "service",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="incidents",
+                        to="helper.service",
+                        verbose_name="Serviço",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Incidente',
-                'verbose_name_plural': 'Incidentes',
-                'ordering': ['-opened_at'],
+                "verbose_name": "Incidente",
+                "verbose_name_plural": "Incidentes",
+                "ordering": ["-opened_at"],
             },
         ),
         migrations.AddField(
-            model_name='action',
-            name='services',
-            field=models.ManyToManyField(blank=True, related_name='actions', to='helper.service', verbose_name='Serviços relacionados'),
+            model_name="action",
+            name="services",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="actions",
+                to="helper.service",
+                verbose_name="Serviços relacionados",
+            ),
         ),
         migrations.CreateModel(
-            name='SyncLog',
+            name="SyncLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sync_type', models.CharField(choices=[('services', 'Serviços'), ('actions', 'Ações')], max_length=10, verbose_name='Tipo de sync')),
-                ('status', models.CharField(choices=[('success', 'Sucesso'), ('error', 'Erro'), ('partial', 'Parcial')], max_length=10, verbose_name='Status')),
-                ('started_at', models.DateTimeField(verbose_name='Iniciado em')),
-                ('finished_at', models.DateTimeField(blank=True, null=True, verbose_name='Finalizado em')),
-                ('attempt', models.PositiveSmallIntegerField(default=1, verbose_name='Tentativa')),
-                ('message', models.TextField(blank=True, verbose_name='Mensagem')),
-                ('raw_payload', models.JSONField(blank=True, default=dict, verbose_name='Payload bruto')),
-                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sync_logs', to='helper.application', verbose_name='Aplicação')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sync_type",
+                    models.CharField(
+                        choices=[("services", "Serviços"), ("actions", "Ações")],
+                        max_length=10,
+                        verbose_name="Tipo de sync",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("success", "Sucesso"),
+                            ("error", "Erro"),
+                            ("partial", "Parcial"),
+                        ],
+                        max_length=10,
+                        verbose_name="Status",
+                    ),
+                ),
+                ("started_at", models.DateTimeField(verbose_name="Iniciado em")),
+                (
+                    "finished_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Finalizado em"
+                    ),
+                ),
+                (
+                    "attempt",
+                    models.PositiveSmallIntegerField(
+                        default=1, verbose_name="Tentativa"
+                    ),
+                ),
+                ("message", models.TextField(blank=True, verbose_name="Mensagem")),
+                (
+                    "raw_payload",
+                    models.JSONField(
+                        blank=True, default=dict, verbose_name="Payload bruto"
+                    ),
+                ),
+                (
+                    "application",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="sync_logs",
+                        to="helper.application",
+                        verbose_name="Aplicação",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Log de Sincronização',
-                'verbose_name_plural': 'Logs de Sincronização',
-                'ordering': ['-started_at'],
+                "verbose_name": "Log de Sincronização",
+                "verbose_name_plural": "Logs de Sincronização",
+                "ordering": ["-started_at"],
             },
         ),
         migrations.CreateModel(
-            name='System',
+            name="System",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True, verbose_name='Deletado em')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Criado em')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Atualizado em')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('slug', models.SlugField(max_length=255, unique=True, verbose_name='Slug')),
-                ('description', models.TextField(blank=True, verbose_name='Descrição')),
-                ('administrators', models.ManyToManyField(blank=True, related_name='administered_systems', to=settings.AUTH_USER_MODEL, verbose_name='Administradores')),
-                ('ecosystems', models.ManyToManyField(blank=True, related_name='systems', to='helper.ecosystem', verbose_name='Ecossistemas')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "deleted_at",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Deletado em"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Criado em"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Atualizado em"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, unique=True, verbose_name="Slug"),
+                ),
+                ("description", models.TextField(blank=True, verbose_name="Descrição")),
+                (
+                    "administrators",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="administered_systems",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Administradores",
+                    ),
+                ),
+                (
+                    "ecosystems",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="systems",
+                        to="helper.ecosystem",
+                        verbose_name="Ecossistemas",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Sistema',
-                'verbose_name_plural': 'Sistemas',
-                'ordering': ['name'],
+                "verbose_name": "Sistema",
+                "verbose_name_plural": "Sistemas",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='EscalationTarget',
+            name="EscalationTarget",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Nome')),
-                ('email', models.EmailField(max_length=254, verbose_name='E-mail')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Ativo')),
-                ('system', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='escalation_targets', to='helper.system', verbose_name='Sistema')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nome")),
+                ("email", models.EmailField(max_length=254, verbose_name="E-mail")),
+                ("is_active", models.BooleanField(default=True, verbose_name="Ativo")),
+                (
+                    "system",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="escalation_targets",
+                        to="helper.system",
+                        verbose_name="Sistema",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Destino de Escalonamento',
-                'verbose_name_plural': 'Destinos de Escalonamento',
-                'ordering': ['name'],
+                "verbose_name": "Destino de Escalonamento",
+                "verbose_name_plural": "Destinos de Escalonamento",
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='application',
-            name='system',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='applications', to='helper.system', verbose_name='Sistema'),
+            model_name="application",
+            name="system",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="applications",
+                to="helper.system",
+                verbose_name="Sistema",
+            ),
         ),
         migrations.CreateModel(
-            name='HealthCheckLog',
+            name="HealthCheckLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('service_name', models.CharField(max_length=255, verbose_name='Serviço')),
-                ('status', models.CharField(max_length=10, verbose_name='Status')),
-                ('message', models.TextField(blank=True, verbose_name='Mensagem')),
-                ('checked_at', models.DateTimeField(auto_now_add=True, verbose_name='Verificado em')),
-                ('raw_payload', models.JSONField(blank=True, default=dict, verbose_name='Payload bruto')),
-                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='health_logs', to='helper.application', verbose_name='Aplicação')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "service_name",
+                    models.CharField(max_length=255, verbose_name="Serviço"),
+                ),
+                ("status", models.CharField(max_length=10, verbose_name="Status")),
+                ("message", models.TextField(blank=True, verbose_name="Mensagem")),
+                (
+                    "checked_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Verificado em"
+                    ),
+                ),
+                (
+                    "raw_payload",
+                    models.JSONField(
+                        blank=True, default=dict, verbose_name="Payload bruto"
+                    ),
+                ),
+                (
+                    "application",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="health_logs",
+                        to="helper.application",
+                        verbose_name="Aplicação",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Log de Health Check',
-                'verbose_name_plural': 'Logs de Health Check',
-                'ordering': ['-checked_at'],
-                'indexes': [models.Index(fields=['application', 'checked_at'], name='helper_heal_applica_a15480_idx'), models.Index(fields=['checked_at'], name='helper_heal_checked_928aeb_idx')],
+                "verbose_name": "Log de Health Check",
+                "verbose_name_plural": "Logs de Health Check",
+                "ordering": ["-checked_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["application", "checked_at"],
+                        name="helper_heal_applica_a15480_idx",
+                    ),
+                    models.Index(
+                        fields=["checked_at"], name="helper_heal_checked_928aeb_idx"
+                    ),
+                ],
             },
         ),
         migrations.AddConstraint(
-            model_name='service',
-            constraint=models.UniqueConstraint(condition=models.Q(('deleted_at__isnull', True)), fields=('application', 'name'), name='unique_active_service_name_per_application'),
+            model_name="service",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("deleted_at__isnull", True)),
+                fields=("application", "name"),
+                name="unique_active_service_name_per_application",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='action',
-            constraint=models.UniqueConstraint(condition=models.Q(('deleted_at__isnull', True)), fields=('application', 'slug'), name='unique_active_action_slug_per_application'),
+            model_name="action",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("deleted_at__isnull", True)),
+                fields=("application", "slug"),
+                name="unique_active_action_slug_per_application",
+            ),
         ),
     ]

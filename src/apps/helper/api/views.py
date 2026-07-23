@@ -1,14 +1,14 @@
 from django.db import connections
-from django.db.utils import OperationalError
 from django.db.models import Exists, OuterRef
+from django.db.utils import OperationalError
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import action
-from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.helper.models import Action, Application, Ecosystem, Service, System
 
@@ -68,12 +68,14 @@ class WhoAmIView(APIView):
 
     def get(self, request):
         user = request.user
-        return Response({
-            "email": user.email,
-            "name": getattr(user, "name", ""),
-            "is_superuser": user.is_superuser,
-            "is_active": user.is_active,
-        })
+        return Response(
+            {
+                "email": user.email,
+                "name": getattr(user, "name", ""),
+                "is_superuser": user.is_superuser,
+                "is_active": user.is_active,
+            }
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -162,7 +164,9 @@ class ServiceViewSet(SuperUserReadOnlyViewSet):
     ordering = ["name"]
 
     def get_queryset(self):
-        return Service.objects.select_related("application", "application__system").all()
+        return Service.objects.select_related(
+            "application", "application__system"
+        ).all()
 
 
 # ---------------------------------------------------------------------------

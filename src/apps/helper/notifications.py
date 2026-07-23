@@ -38,7 +38,8 @@ def notify_incident_opened(incident: Incident):
     if _is_in_maintenance(service):
         logger.info(
             "Notificação suprimida por MaintenanceWindow: service=%s incident=%s",
-            service.name, incident.pk,
+            service.name,
+            incident.pk,
         )
         return
 
@@ -69,7 +70,9 @@ def notify_incident_opened(incident: Incident):
 
     logger.info(
         "Notificação de falha enviada: service=%s incident=%s recipients=%d",
-        service.name, incident.pk, len(recipients),
+        service.name,
+        incident.pk,
+        len(recipients),
     )
 
 
@@ -82,7 +85,8 @@ def notify_incident_recovered(incident: Incident):
     if _is_in_maintenance(service):
         logger.info(
             "Notificação de recuperação suprimida por MaintenanceWindow: service=%s incident=%s",
-            service.name, incident.pk,
+            service.name,
+            incident.pk,
         )
         return
 
@@ -112,7 +116,9 @@ def notify_incident_recovered(incident: Incident):
 
     logger.info(
         "Notificação de recuperação enviada: service=%s incident=%s recipients=%d",
-        service.name, incident.pk, len(recipients),
+        service.name,
+        incident.pk,
+        len(recipients),
     )
 
 
@@ -127,27 +133,35 @@ def _is_in_maintenance(service) -> bool:
     application = service.application
     system = application.system
 
-    return MaintenanceWindow.objects.filter(
-        is_active=True,
-        start_at__lte=now,
-        end_at__gte=now,
-    ).filter(
-        models.Q(scope_type=MaintenanceWindow.SCOPE_GLOBAL)
-        | models.Q(scope_type=MaintenanceWindow.SCOPE_SYSTEM, scope_id=system.id)
-        | models.Q(scope_type=MaintenanceWindow.SCOPE_APPLICATION, scope_id=application.id)
-    ).exists()
+    return (
+        MaintenanceWindow.objects.filter(
+            is_active=True,
+            start_at__lte=now,
+            end_at__gte=now,
+        )
+        .filter(
+            models.Q(scope_type=MaintenanceWindow.SCOPE_GLOBAL)
+            | models.Q(scope_type=MaintenanceWindow.SCOPE_SYSTEM, scope_id=system.id)
+            | models.Q(
+                scope_type=MaintenanceWindow.SCOPE_APPLICATION, scope_id=application.id
+            )
+        )
+        .exists()
+    )
 
 
 def _get_recipients(system) -> list[str]:
     """Retorna lista de emails dos administradores do System e EscalationTargets ativos."""
     admin_emails = list(
-        system.administrators.filter(is_active=True, email__isnull=False)
-        .values_list("email", flat=True)
+        system.administrators.filter(is_active=True, email__isnull=False).values_list(
+            "email", flat=True
+        )
     )
 
     escalation_emails = list(
-        EscalationTarget.objects.filter(system=system, is_active=True)
-        .values_list("email", flat=True)
+        EscalationTarget.objects.filter(system=system, is_active=True).values_list(
+            "email", flat=True
+        )
     )
 
     return list(set(admin_emails + escalation_emails))

@@ -17,7 +17,9 @@ from apps.helper.models import Incident, Service
 logger = logging.getLogger(__name__)
 
 
-def handle_service_status_change(service: Service, previous_status: str, new_status: str):
+def handle_service_status_change(
+    service: Service, previous_status: str, new_status: str
+):
     """
     Avalia a transição de status e gerencia o Incident correspondente.
     Chamado após qualquer mudança de status no Service.
@@ -27,7 +29,9 @@ def handle_service_status_change(service: Service, previous_status: str, new_sta
 
     logger.info(
         "Status change: service=%s %s → %s",
-        service.name, previous_status, new_status,
+        service.name,
+        previous_status,
+        new_status,
     )
 
     if new_status == Service.STATUS_FAILED:
@@ -46,7 +50,9 @@ def _open_incident(service: Service, previous_status: str):
     """Abre Incident se ainda não houver um ativo para este serviço."""
     active = Incident.objects.filter(service=service, is_active=True).first()
     if active:
-        logger.debug("Incident já ativo para %s — nenhuma notificação enviada.", service.name)
+        logger.debug(
+            "Incident já ativo para %s — nenhuma notificação enviada.", service.name
+        )
         return
 
     incident = Incident.objects.create(
@@ -56,7 +62,9 @@ def _open_incident(service: Service, previous_status: str):
         is_active=True,
     )
 
-    logger.warning("Incident aberto: service=%s incident_id=%s", service.name, incident.pk)
+    logger.warning(
+        "Incident aberto: service=%s incident_id=%s", service.name, incident.pk
+    )
     _notify_failure(incident)
 
 
@@ -71,7 +79,9 @@ def _close_incident(service: Service):
         incident.current_status = Service.STATUS_OK
         incident.save(update_fields=["is_active", "recovered_at", "current_status"])
 
-        logger.info("Incident fechado: service=%s incident_id=%s", service.name, incident.pk)
+        logger.info(
+            "Incident fechado: service=%s incident_id=%s", service.name, incident.pk
+        )
         _notify_recovery(incident)
 
 
@@ -88,7 +98,8 @@ def _notify_failure(incident: Incident):
     except Exception as exc:
         logger.error(
             "Falha ao enviar notificação de incidente: service=%s error=%s",
-            incident.service.name, exc,
+            incident.service.name,
+            exc,
         )
 
 
@@ -100,5 +111,6 @@ def _notify_recovery(incident: Incident):
     except Exception as exc:
         logger.error(
             "Falha ao enviar notificação de recuperação: service=%s error=%s",
-            incident.service.name, exc,
+            incident.service.name,
+            exc,
         )

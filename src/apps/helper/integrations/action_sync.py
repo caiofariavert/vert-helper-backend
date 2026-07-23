@@ -46,7 +46,10 @@ def sync_actions_for_application(application: Application) -> dict:
 
     logger.info(
         "sync_actions: app=%s criados=%d atualizados=%d inativados=%d",
-        application.slug, summary["created"], summary["updated"], summary["inactivated"],
+        application.slug,
+        summary["created"],
+        summary["updated"],
+        summary["inactivated"],
     )
     return summary
 
@@ -56,7 +59,9 @@ def sync_actions_for_application(application: Application) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _fetch_and_upsert_actions(client: ExternalApiClient, application: Application, summary: dict) -> set:
+def _fetch_and_upsert_actions(
+    client: ExternalApiClient, application: Application, summary: dict
+) -> set:
     """Itera sobre todos os actions remotos e faz upsert. Retorna set de slugs vistos."""
     seen_slugs: set[str] = set()
 
@@ -113,28 +118,45 @@ def _upsert_action(application: Application, detail: dict, summary: dict):
             action.source_version += 1
             summary["updated"] += 1
 
-        action.save(update_fields=[
-            "name", "description", "questions_schema", "source_version",
-            "is_active", "deleted_at", "updated_at",
-        ])
+        action.save(
+            update_fields=[
+                "name",
+                "description",
+                "questions_schema",
+                "source_version",
+                "is_active",
+                "deleted_at",
+                "updated_at",
+            ]
+        )
 
     _reconcile_action_services(action, application, service_names)
 
 
-def _has_changed(action: Action, name: str, description: str, questions_schema: list) -> bool:
+def _has_changed(
+    action: Action, name: str, description: str, questions_schema: list
+) -> bool:
     if action.name != name or action.description != description:
         return True
-    return json.dumps(action.questions_schema, sort_keys=True) != json.dumps(questions_schema, sort_keys=True)
+    return json.dumps(action.questions_schema, sort_keys=True) != json.dumps(
+        questions_schema, sort_keys=True
+    )
 
 
-def _reconcile_action_services(action: Action, application: Application, service_names: list[str]):
+def _reconcile_action_services(
+    action: Action, application: Application, service_names: list[str]
+):
     """Atualiza vínculo M2M Action x Service com base nos nomes vindos da origem."""
     services = Service.objects.filter(application=application, name__in=service_names)
     action.services.set(services)
 
 
-def _inactivate_missing_actions(application: Application, seen_slugs: set, summary: dict):
-    missing = Action.objects.filter(application=application).exclude(slug__in=seen_slugs)
+def _inactivate_missing_actions(
+    application: Application, seen_slugs: set, summary: dict
+):
+    missing = Action.objects.filter(application=application).exclude(
+        slug__in=seen_slugs
+    )
     for action in missing:
         action.soft_delete()
         summary["inactivated"] += 1

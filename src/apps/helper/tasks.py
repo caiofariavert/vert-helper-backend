@@ -26,7 +26,9 @@ def sync_application_health(application_id: str, force_refresh: bool = False):
     try:
         application = Application.objects.get(id=application_id)
     except Application.DoesNotExist:
-        log.error("sync_application_health: Application %s não encontrada.", application_id)
+        log.error(
+            "sync_application_health: Application %s não encontrada.", application_id
+        )
         return
 
     log.info("sync_application_health: iniciando para %s", application.name)
@@ -50,7 +52,9 @@ def sync_application_actions(application_id: str):
     try:
         application = Application.objects.get(id=application_id)
     except Application.DoesNotExist:
-        log.error("sync_application_actions: Application %s não encontrada.", application_id)
+        log.error(
+            "sync_application_actions: Application %s não encontrada.", application_id
+        )
         return
 
     log.info("sync_application_actions: iniciando para %s", application.name)

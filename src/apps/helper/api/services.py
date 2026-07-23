@@ -26,7 +26,9 @@ logger = logging.getLogger(__name__)
 EXECUTION_TIMEOUT = 30
 
 
-def execute_action(action: Action, mapped_kwargs: dict, input_payload: dict, user) -> dict:
+def execute_action(
+    action: Action, mapped_kwargs: dict, input_payload: dict, user
+) -> dict:
     """
     Executa uma Action no sistema externo e persiste o log.
 
@@ -48,7 +50,9 @@ def execute_action(action: Action, mapped_kwargs: dict, input_payload: dict, use
     try:
         response = requests.post(url, json=mapped_kwargs, timeout=EXECUTION_TIMEOUT)
         raw_response = _safe_json(response)
-        result_status, result_message, result_details = _parse_response(response, raw_response)
+        result_status, result_message, result_details = _parse_response(
+            response, raw_response
+        )
     except requests.Timeout:
         result_message = "A execução excedeu o tempo limite."
         result_details = f"Timeout após {EXECUTION_TIMEOUT}s em {url}"
@@ -56,7 +60,9 @@ def execute_action(action: Action, mapped_kwargs: dict, input_payload: dict, use
     except requests.RequestException as exc:
         result_message = "Falha ao comunicar com o sistema externo."
         result_details = str(exc)
-        logger.error("Action execution request error: action=%s error=%s", action.slug, exc)
+        logger.error(
+            "Action execution request error: action=%s error=%s", action.slug, exc
+        )
 
     finished_at = timezone.now()
 
@@ -121,9 +127,16 @@ def _parse_response(response: requests.Response, body: dict) -> tuple[str, str, 
 
 
 def _persist_log(
-    action, user, input_payload, mapped_kwargs,
-    result_status, result_message, result_details,
-    started_at, finished_at, raw_response,
+    action,
+    user,
+    input_payload,
+    mapped_kwargs,
+    result_status,
+    result_message,
+    result_details,
+    started_at,
+    finished_at,
+    raw_response,
 ):
     try:
         ActionExecutionLog.objects.create(
@@ -139,10 +152,14 @@ def _persist_log(
             raw_response=raw_response,
         )
     except Exception as exc:
-        logger.error("Failed to persist ActionExecutionLog: action=%s error=%s", action.slug, exc)
+        logger.error(
+            "Failed to persist ActionExecutionLog: action=%s error=%s", action.slug, exc
+        )
 
 
-def _build_frontend_response(result_status: str, result_message: str, raw_response: dict) -> dict:
+def _build_frontend_response(
+    result_status: str, result_message: str, raw_response: dict
+) -> dict:
     """Monta resposta para o frontend. Nunca expõe result_details."""
     if result_status == ActionExecutionLog.RESULT_SUCCESS:
         return {"status": "success", "message": result_message}
