@@ -53,10 +53,13 @@ class ActionFilter(django_filters.FilterSet):
     service = django_filters.CharFilter(
         field_name="services__name", lookup_expr="iexact"
     )
+    application = django_filters.CharFilter(
+        field_name="application__slug", lookup_expr="exact"
+    )
 
     class Meta:
         model = Action
-        fields = ["search", "service"]
+        fields = ["search", "service", "application"]
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(name__icontains=value) | queryset.filter(

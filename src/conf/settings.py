@@ -332,7 +332,7 @@ CAS_CHECK_NEXT = False
 URL_CAS_SERVER_URL = CAS_SERVER_URL.replace("/cas/", "/")
 
 FRONTEND_AUTH_REDIRECT = config(
-    "FRONTEND_AUTH_REDIRECT", default="http://localhost:5002/auth"
+    "FRONTEND_AUTH_REDIRECT", default="http://localhost:5001/auth"
 )
 
 ####

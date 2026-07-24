@@ -190,6 +190,7 @@ class ActionViewSet(SuperUserReadOnlyViewSet):
             Action.objects.select_related("application")
             .prefetch_related("services")
             .annotate(is_recommended=Exists(failed_service))
+            .filter(application__slug=self.kwargs.get("application_slug"))
             .order_by("-is_recommended", "name")
         )
 
@@ -201,7 +202,7 @@ class ActionViewSet(SuperUserReadOnlyViewSet):
         return ActionListSerializer
 
     @action(detail=True, methods=["post"], url_path="execute")
-    def execute(self, request, slug=None):
+    def execute(self, request, slug=None, application_slug=None):
         action_obj = self.get_object()
 
         serializer = ActionExecuteSerializer(

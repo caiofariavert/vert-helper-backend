@@ -16,7 +16,11 @@ router.register("ecosystems", EcosystemViewSet, basename="ecosystem")
 router.register("systems", SystemViewSet, basename="system")
 router.register("applications", ApplicationViewSet, basename="application")
 router.register("services", ServiceViewSet, basename="service")
-router.register("actions", ActionViewSet, basename="action")
+router.register(
+    r"(?P<application_slug>[^/.]+)/actions",
+    ActionViewSet,
+    basename="action",
+)
 
 urlpatterns = [
     path("health/", HelperHealthView.as_view(), name="helper-health"),
